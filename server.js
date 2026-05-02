@@ -173,6 +173,7 @@ app.get('/setup', sendPage('setup.html'));
 app.get('/admin/:eventId', sendPage('admin.html'));
 app.get('/display/:eventId', sendPage('display.html'));
 app.get('/raffle/:eventId', sendPage('list.html'));
+app.get('/instructions/:eventId', sendPage('instructions.html'));
 
 // ---------- Routes: events ----------
 app.get('/api/events', (_req, res) => {
@@ -337,7 +338,8 @@ app.get('/qr/:eventId.png', async (req, res) => {
   if (!event) return res.status(404).end();
   const host = req.get('x-forwarded-host') || req.get('host');
   const proto = req.get('x-forwarded-proto') || req.protocol;
-  const url = `${proto}://${host}/raffle/${event.id}`;
+  const target = req.query.target === 'admin' ? `admin/${event.id}` : `raffle/${event.id}`;
+  const url = `${proto}://${host}/${target}`;
   const png = await QRCode.toBuffer(url, { width: 600, margin: 2, errorCorrectionLevel: 'M' });
   res.setHeader('Content-Type', 'image/png');
   res.setHeader('Cache-Control', 'public, max-age=86400');

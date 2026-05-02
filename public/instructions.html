@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Instructions · Manor Lanes Fundraisers</title>
+  <link rel="stylesheet" href="/static/css/app.css?v=7">
+</head>
+<body class="instructions-body">
+  <!-- PIN gate -->
+  <section id="pinScreen" class="pin-screen no-print">
+    <div class="card pin-card">
+      <h2 style="margin-top:0">Enter PIN to view instructions</h2>
+      <p class="muted small">Same PIN as the entry portal (event date in MMDD).</p>
+      <div class="field">
+        <input id="pinInput" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="MMDD">
+      </div>
+      <button id="pinBtn" style="width:100%">Unlock</button>
+      <p id="pinErr" class="small" style="color:var(--bad);margin-top:10px;display:none">Wrong PIN.</p>
+    </div>
+  </section>
+
+  <!-- Print toolbar (screen only) -->
+  <div id="toolbar" class="print-toolbar no-print" style="display:none">
+    <div class="row between" style="max-width:840px;margin:0 auto;padding:12px 20px">
+      <a href="/" class="btn secondary">← Back</a>
+      <div class="muted small">Tip: print to PDF — Cmd+P (Mac) or Ctrl+P (Windows)</div>
+      <button id="printBtn">🖨 Print</button>
+    </div>
+  </div>
+
+  <!-- Printable sheet -->
+  <main id="sheet" class="instr-sheet" style="display:none">
+    <header class="instr-head">
+      <img class="ml-mark" src="/static/logos/manor-lanes.png" alt="Manor Lanes">
+      <div class="instr-titles">
+        <div class="instr-eyebrow">Manor Lanes Basket Raffle</div>
+        <h1 id="ihEventName">Event Name</h1>
+        <div id="ihMeta" class="instr-meta">—</div>
+      </div>
+      <img id="ihOrgLogo" class="org-mark" alt="" style="display:none">
+    </header>
+
+    <section class="instr-callout">
+      <div class="instr-callout-left">
+        <div class="instr-cta-eyebrow">📱 Open on your phone</div>
+        <div class="instr-url" id="adminUrl">—</div>
+        <div class="instr-pin">
+          <span class="instr-pin-label">PIN</span>
+          <span class="instr-pin-value" id="adminPin">—</span>
+        </div>
+      </div>
+      <div class="instr-callout-right">
+        <img id="adminQr" alt="QR — entry portal">
+        <div class="qr-caption">Scan to open entry portal</div>
+      </div>
+    </section>
+
+    <section class="instr-section">
+      <h2>How to enter a winning ticket number</h2>
+      <ol class="instr-steps">
+        <li><strong>Tap any basket cell</strong> on the grid.</li>
+        <li><strong>Type the winning ticket number</strong> from the drawn ticket.</li>
+        <li><em>(Optional)</em> Add a description like the basket name.</li>
+        <li><strong>Tap Save.</strong></li>
+      </ol>
+      <p class="instr-note">The display board on the TV updates within a second. Customers scanning the QR code see the number on their phone instantly.</p>
+    </section>
+
+    <section class="instr-section">
+      <h2>When a winner picks up their basket</h2>
+      <ol class="instr-steps">
+        <li>Tap the same basket cell again.</li>
+        <li>Check the <strong>"Picked up by winner"</strong> toggle.</li>
+        <li>Tap Save.</li>
+      </ol>
+      <p class="instr-note">The cell turns <span class="chip-good">green</span> on the display so customers know it's claimed.</p>
+    </section>
+
+    <section class="instr-section instr-section-highlight">
+      <h2>👥 Multiple helpers can enter at the same time</h2>
+      <p>Anyone with the URL and PIN can enter ticket numbers on their own phone simultaneously. Everyone sees each other's entries appear live. No setup needed — just share the URL and PIN with each helper.</p>
+    </section>
+
+    <section class="instr-section">
+      <h2>Basket types you'll see</h2>
+      <ul class="instr-legend">
+        <li><span class="chip chip-gold"></span> <strong>Gold</strong> — Regular Basket</li>
+        <li><span class="chip chip-orange"></span> <strong>Orange</strong> — Big Ticket Item</li>
+        <li><span class="chip chip-purple"></span> <strong>Purple</strong> — Special</li>
+        <li><span class="chip chip-green"></span> <strong>Green</strong> — Already picked up</li>
+      </ul>
+    </section>
+
+    <section class="instr-section">
+      <h2>Customer search page (already linked from the QR on the display)</h2>
+      <div class="instr-url instr-url-sm" id="custUrl">—</div>
+      <p class="instr-note">Customers scan the QR code on the TV display to look up their ticket number. You don't need to share this URL — it's automatic. But you can put it on signage if you want to.</p>
+    </section>
+
+    <footer class="instr-foot">
+      <div>Hosted by <strong>Manor Lanes</strong> · Questions? <strong>brian@manorlanes.com</strong></div>
+    </footer>
+  </main>
+
+  <script src="/static/js/instructions.js?v=7"></script>
+</body>
+</html>

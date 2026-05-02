@@ -55,9 +55,10 @@ function render() {
       : `<span class="b-status waiting">Come claim it</span>`;
     const catCls = b.category ? ` cat-${b.category}` : '';
     const label = labelMap[b.category] || 'Basket';
+    const num = b.display_number ?? b.basket_number;
     return `
       <div class="cust-row${catCls} ${q && isMatch(b, q) ? 'hit' : ''}">
-        <div class="b-num">${label}<br>#${b.basket_number}</div>
+        <div class="b-num">${label}<br>#${num}</div>
         <div>
           <div class="b-ticket">${escapeHtml(b.ticket_number)}</div>
           ${b.description ? `<span class="b-desc">${escapeHtml(b.description)}</span>` : ''}

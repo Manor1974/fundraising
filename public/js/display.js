@@ -86,10 +86,11 @@ function render() {
     const big = has ? escapeHtml(b.ticket_number) : '—';
     const checkIcon = b.picked_up ? `<span class="pick-icon" aria-label="Picked up">✓</span>` : '';
     const label = labelMap[b.category] || 'BASKET';
+    const num = b.display_number ?? b.basket_number;
     return `
       <div class="dcell ${cls}" data-num="${b.basket_number}">
         <div class="basket-header" style="font-size:${hFs}px">
-          <span>${label} #${b.basket_number}</span>${checkIcon}
+          <span>${label} #${num}</span>${checkIcon}
         </div>
         <div class="dbig" style="font-size:${fontSize}px">${big}</div>
       </div>

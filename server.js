@@ -47,8 +47,10 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_baskets_event ON baskets(event_id);
 `);
 
-// Migration: add category column if it doesn't exist (idempotent)
+// Migration: add category and display_number columns if they don't exist (idempotent)
 try { db.exec(`ALTER TABLE baskets ADD COLUMN category TEXT;`); } catch (_) { /* already exists */ }
+try { db.exec(`ALTER TABLE baskets ADD COLUMN display_number INTEGER;`); } catch (_) { /* already exists */ }
+db.exec(`UPDATE baskets SET display_number = basket_number WHERE display_number IS NULL;`);
 
 const stmts = {
   insertEvent: db.prepare(`
@@ -56,16 +58,21 @@ const stmts = {
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `),
   insertBasket: db.prepare(`
-    INSERT INTO baskets (event_id, basket_number) VALUES (?, ?)
+    INSERT INTO baskets (event_id, basket_number, display_number) VALUES (?, ?, ?)
   `),
   listEvents: db.prepare(`SELECT * FROM events WHERE archived = 0 ORDER BY event_date DESC, id DESC`),
   getEvent: db.prepare(`SELECT * FROM events WHERE id = ?`),
   archiveEvent: db.prepare(`UPDATE events SET archived = 1 WHERE id = ?`),
   deleteEvent: db.prepare(`DELETE FROM events WHERE id = ?`),
   listBaskets: db.prepare(`
-    SELECT basket_number, ticket_number, description, picked_up, category, updated_at
+    SELECT basket_number, display_number, ticket_number, description, picked_up, category, updated_at
     FROM baskets WHERE event_id = ? ORDER BY basket_number
   `),
+  listBasketsByCategory: db.prepare(`
+    SELECT basket_number FROM baskets WHERE event_id = ? AND COALESCE(category, '') = COALESCE(?, '')
+    ORDER BY basket_number
+  `),
+  setDisplayNumber: db.prepare(`UPDATE baskets SET display_number = ? WHERE event_id = ? AND basket_number = ?`),
   getBasket: db.prepare(`SELECT * FROM baskets WHERE event_id = ? AND basket_number = ?`),
   updateBasket: db.prepare(`
     UPDATE baskets
@@ -140,6 +147,16 @@ function checkPin(req, res, eventId) {
   return event;
 }
 
+// Recompute display_number within a category: 1, 2, 3... in basket_number order.
+// Called after a basket's category changes — keeps Big Ticket #1-#7 etc. tidy.
+function renumberCategory(eventId, category) {
+  const rows = stmts.listBasketsByCategory.all(eventId, category);
+  const tx = db.transaction(() => {
+    rows.forEach((r, i) => stmts.setDisplayNumber.run(i + 1, eventId, r.basket_number));
+  });
+  tx();
+}
+
 function mmddFromDate(isoDate) {
   const d = new Date(isoDate + 'T00:00:00');
   if (Number.isNaN(d.getTime())) return null;
@@ -184,7 +201,7 @@ app.post('/api/events', upload.single('logo'), (req, res) => {
   const insert = db.transaction(() => {
     const r = stmts.insertEvent.run(name, organization || null, event_date, event_time || null, pin, basket_count, orgLogo);
     const eventId = r.lastInsertRowid;
-    for (let i = 1; i <= basket_count; i++) stmts.insertBasket.run(eventId, i);
+    for (let i = 1; i <= basket_count; i++) stmts.insertBasket.run(eventId, i, i);
     return eventId;
   });
   const eventId = insert();
@@ -213,7 +230,7 @@ app.patch('/api/events/:id/basket-count', (req, res) => {
 
   const tx = db.transaction(() => {
     if (newCount > currentMax) {
-      for (let i = currentMax + 1; i <= newCount; i++) stmts.insertBasket.run(event.id, i);
+      for (let i = currentMax + 1; i <= newCount; i++) stmts.insertBasket.run(event.id, i, i);
     } else {
       const filled = stmts.countFilledAbove.get(event.id, newCount).n;
       if (filled > 0 && !req.body.force) {
@@ -269,6 +286,19 @@ app.patch('/api/events/:id/baskets/:n', (req, res) => {
     : existing.category;
 
   stmts.updateBasket.run(ticket_number, description, picked_up, category, event.id, basketNum);
+
+  // If category changed, renumber both the OLD category (gap closed)
+  // and the NEW category (this basket added in the right slot).
+  const categoryChanged = (existing.category || null) !== (category || null);
+  if (categoryChanged) {
+    renumberCategory(event.id, existing.category || null);
+    if ((category || null) !== (existing.category || null)) {
+      renumberCategory(event.id, category || null);
+    }
+    // Broadcast event-update so all displays refetch (display numbers may have shifted)
+    broadcast(event.id, { type: 'event-update' });
+  }
+
   const updated = stmts.getBasket.get(event.id, basketNum);
   broadcast(event.id, { type: 'basket', basket: updated });
   res.json(updated);

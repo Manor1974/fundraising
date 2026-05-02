@@ -93,9 +93,10 @@ function render() {
       : '';
     const catCls = b.category ? ` cat-${b.category}` : '';
     const label = labelMap[b.category] || 'Basket';
+    const num = b.display_number ?? b.basket_number;
     return `
       <div class="basket-cell${catCls}" data-num="${b.basket_number}">
-        <div class="num">${label} #${b.basket_number}</div>
+        <div class="num">${label} #${num}</div>
         <div class="ticket ${has ? '' : 'empty'}">${has ? escapeHtml(b.ticket_number) : 'Tap to enter'}</div>
         ${b.description ? `<div class="desc">${escapeHtml(b.description)}</div>` : ''}
         ${status}
@@ -112,7 +113,8 @@ function openModal(num) {
   editing = num;
   const labelMap = { big: 'Big Ticket', special: 'Special' };
   const label = labelMap[b.category] || 'Basket';
-  els.modalTitle.textContent = `${label} #${num}`;
+  const displayNum = b.display_number ?? b.basket_number;
+  els.modalTitle.textContent = `${label} #${displayNum}`;
   els.ticketInput.value = b.ticket_number || '';
   els.descInput.value = b.description || '';
   els.pickedInput.checked = !!b.picked_up;

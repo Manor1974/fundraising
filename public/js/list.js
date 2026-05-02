@@ -101,6 +101,8 @@ function startStream() {
         const idx = baskets.findIndex(x => x.basket_number === msg.basket.basket_number);
         if (idx >= 0) baskets[idx] = msg.basket;
         render();
+      } else if (msg.type === 'event-update') {
+        loadEvent(); loadBaskets();
       }
     } catch {}
   };

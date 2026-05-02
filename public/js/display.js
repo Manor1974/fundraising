@@ -145,6 +145,8 @@ function startStream() {
         if (idx >= 0) baskets[idx] = msg.basket;
         render();
         if (msg.basket.ticket_number && wasEmpty) flashCell(msg.basket.basket_number);
+      } else if (msg.type === 'event-update') {
+        loadEvent(); loadBaskets();
       }
     } catch {}
   };

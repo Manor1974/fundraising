@@ -21,6 +21,7 @@ const els = {
   cancelBtn: document.getElementById('cancelBtn'),
   displayLink: document.getElementById('displayLink'),
   listLink: document.getElementById('listLink'),
+  adjustCountBtn: document.getElementById('adjustCountBtn'),
 };
 
 let pin = sessionStorage.getItem(PIN_KEY) || '';
@@ -167,9 +168,47 @@ function startStream() {
           baskets[idx] = msg.basket;
           render();
         }
+      } else if (msg.type === 'event-update') {
+        loadBaskets();
       }
     } catch {}
   };
+}
+
+async function adjustBasketCount() {
+  const current = baskets.length;
+  const input = prompt(`How many baskets total?\n\nCurrent: ${current}\nMin 1, max 200.`, current);
+  if (input == null) return;
+  const newCount = parseInt(input, 10);
+  if (!Number.isFinite(newCount) || newCount < 1 || newCount > 200) {
+    alert('Please enter a number between 1 and 200.');
+    return;
+  }
+  if (newCount === current) return;
+
+  const body = { basket_count: newCount };
+  let res = await fetch(`/api/events/${EVENT_ID}/basket-count`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-pin': pin },
+    body: JSON.stringify(body),
+  });
+
+  if (res.status === 409) {
+    const data = await res.json();
+    const ok = confirm(`${data.error}.\n\nRemove them anyway? (Their winning numbers will be erased.)`);
+    if (!ok) return;
+    body.force = true;
+    res = await fetch(`/api/events/${EVENT_ID}/basket-count`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-pin': pin },
+      body: JSON.stringify(body),
+    });
+  }
+  if (!res.ok) {
+    alert((await res.json()).error || 'Update failed');
+    return;
+  }
+  await loadBaskets();
 }
 
 // Wire up
@@ -178,6 +217,7 @@ els.pinInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') unlock(
 els.saveBtn.addEventListener('click', save);
 els.cancelBtn.addEventListener('click', closeModal);
 els.clearBtn.addEventListener('click', clearTicket);
+els.adjustCountBtn?.addEventListener('click', adjustBasketCount);
 els.modal.addEventListener('click', (e) => { if (e.target === els.modal) closeModal(); });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && els.modal.classList.contains('open')) closeModal();

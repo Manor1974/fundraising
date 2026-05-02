@@ -70,6 +70,10 @@ const stmts = {
     WHERE event_id = ? AND basket_number = ?
   `),
   countBaskets: db.prepare(`SELECT COUNT(*) AS n FROM baskets WHERE event_id = ?`),
+  maxBasketNum: db.prepare(`SELECT COALESCE(MAX(basket_number), 0) AS n FROM baskets WHERE event_id = ?`),
+  countFilledAbove: db.prepare(`SELECT COUNT(*) AS n FROM baskets WHERE event_id = ? AND basket_number > ? AND ticket_number IS NOT NULL`),
+  deleteBasketsAbove: db.prepare(`DELETE FROM baskets WHERE event_id = ? AND basket_number > ?`),
+  setBasketCount: db.prepare(`UPDATE events SET basket_count = ? WHERE id = ?`),
 };
 
 // ---------- App ----------
@@ -189,6 +193,40 @@ app.delete('/api/events/:id', (req, res) => {
   if (!event) return;
   stmts.deleteEvent.run(event.id);
   res.json({ ok: true });
+});
+
+// Change basket count after creation. Adds empty baskets when growing,
+// removes baskets when shrinking (refuses if the removed range has filled
+// tickets, unless ?force=1).
+app.patch('/api/events/:id/basket-count', (req, res) => {
+  const event = checkPin(req, res, req.params.id);
+  if (!event) return;
+  const newCount = parseInt(req.body.basket_count, 10);
+  if (!Number.isFinite(newCount) || newCount < 1 || newCount > 200) {
+    return res.status(400).json({ error: 'basket_count must be 1-200' });
+  }
+  const currentMax = stmts.maxBasketNum.get(event.id).n;
+  if (newCount === currentMax) return res.json({ ok: true, basket_count: newCount });
+
+  const tx = db.transaction(() => {
+    if (newCount > currentMax) {
+      for (let i = currentMax + 1; i <= newCount; i++) stmts.insertBasket.run(event.id, i);
+    } else {
+      const filled = stmts.countFilledAbove.get(event.id, newCount).n;
+      if (filled > 0 && !req.body.force) {
+        const err = new Error(`${filled} basket(s) above #${newCount} have ticket numbers`);
+        err.status = 409; err.filled = filled; throw err;
+      }
+      stmts.deleteBasketsAbove.run(event.id, newCount);
+    }
+    stmts.setBasketCount.run(newCount, event.id);
+  });
+  try { tx(); } catch (e) {
+    if (e.status === 409) return res.status(409).json({ error: e.message, filled: e.filled });
+    throw e;
+  }
+  broadcast(event.id, { type: 'event-update', basket_count: newCount });
+  res.json({ ok: true, basket_count: newCount });
 });
 
 // PIN check endpoint (for admin login)

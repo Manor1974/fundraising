@@ -23,6 +23,7 @@ const els = {
   displayLink: document.getElementById('displayLink'),
   listLink: document.getElementById('listLink'),
   adjustCountBtn: document.getElementById('adjustCountBtn'),
+  renameEventBtn: document.getElementById('renameEventBtn'),
 };
 
 let pin = sessionStorage.getItem(PIN_KEY) || '';
@@ -221,6 +222,26 @@ async function adjustBasketCount() {
   await loadBaskets();
 }
 
+async function renameEvent() {
+  const current = event?.name || '';
+  const input = prompt(`Event name (shorter is better — fits the display nicely):\n\nCurrent: ${current}`, current);
+  if (input == null) return;
+  const newName = input.trim();
+  if (!newName || newName === current) return;
+  if (newName.length > 80) { alert('Max 80 characters.'); return; }
+  const r = await fetch(`/api/events/${EVENT_ID}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-pin': pin },
+    body: JSON.stringify({ name: newName }),
+  });
+  if (!r.ok) {
+    alert((await r.json()).error || 'Update failed');
+    return;
+  }
+  event.name = newName;
+  els.evtTitle.textContent = newName;
+}
+
 // Wire up
 els.pinBtn.addEventListener('click', unlock);
 els.pinInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') unlock(); });
@@ -228,6 +249,7 @@ els.saveBtn.addEventListener('click', save);
 els.cancelBtn.addEventListener('click', closeModal);
 els.clearBtn.addEventListener('click', clearTicket);
 els.adjustCountBtn?.addEventListener('click', adjustBasketCount);
+els.renameEventBtn?.addEventListener('click', renameEvent);
 els.modal.addEventListener('click', (e) => { if (e.target === els.modal) closeModal(); });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && els.modal.classList.contains('open')) closeModal();

@@ -84,6 +84,7 @@ const stmts = {
   countFilledAbove: db.prepare(`SELECT COUNT(*) AS n FROM baskets WHERE event_id = ? AND basket_number > ? AND ticket_number IS NOT NULL`),
   deleteBasketsAbove: db.prepare(`DELETE FROM baskets WHERE event_id = ? AND basket_number > ?`),
   setBasketCount: db.prepare(`UPDATE events SET basket_count = ? WHERE id = ?`),
+  setEventName: db.prepare(`UPDATE events SET name = ? WHERE id = ?`),
 };
 
 // ---------- App ----------
@@ -219,6 +220,17 @@ app.delete('/api/events/:id', (req, res) => {
 // Change basket count after creation. Adds empty baskets when growing,
 // removes baskets when shrinking (refuses if the removed range has filled
 // tickets, unless ?force=1).
+app.patch('/api/events/:id', (req, res) => {
+  const event = checkPin(req, res, req.params.id);
+  if (!event) return;
+  const name = String(req.body?.name ?? '').trim();
+  if (!name) return res.status(400).json({ error: 'name required' });
+  if (name.length > 80) return res.status(400).json({ error: 'name max 80 chars' });
+  stmts.setEventName.run(name, event.id);
+  broadcast(event.id, { type: 'event-update', name });
+  res.json({ ok: true, name });
+});
+
 app.patch('/api/events/:id/basket-count', (req, res) => {
   const event = checkPin(req, res, req.params.id);
   if (!event) return;

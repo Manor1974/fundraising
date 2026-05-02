@@ -16,6 +16,7 @@ const els = {
   ticketInput: document.getElementById('ticketInput'),
   descInput: document.getElementById('descInput'),
   pickedInput: document.getElementById('pickedInput'),
+  categoryInput: document.getElementById('categoryInput'),
   saveBtn: document.getElementById('saveBtn'),
   clearBtn: document.getElementById('clearBtn'),
   cancelBtn: document.getElementById('cancelBtn'),
@@ -84,14 +85,17 @@ async function loadBaskets() {
 }
 
 function render() {
+  const labelMap = { big: 'Big Ticket', special: 'Special' };
   els.grid.innerHTML = baskets.map(b => {
     const has = b.ticket_number;
     const status = has
       ? (b.picked_up ? `<span class="status picked">Picked</span>` : `<span class="status waiting">Waiting</span>`)
       : '';
+    const catCls = b.category ? ` cat-${b.category}` : '';
+    const label = labelMap[b.category] || 'Basket';
     return `
-      <div class="basket-cell" data-num="${b.basket_number}">
-        <div class="num">Basket #${b.basket_number}</div>
+      <div class="basket-cell${catCls}" data-num="${b.basket_number}">
+        <div class="num">${label} #${b.basket_number}</div>
         <div class="ticket ${has ? '' : 'empty'}">${has ? escapeHtml(b.ticket_number) : 'Tap to enter'}</div>
         ${b.description ? `<div class="desc">${escapeHtml(b.description)}</div>` : ''}
         ${status}
@@ -106,10 +110,13 @@ function render() {
 function openModal(num) {
   const b = baskets.find(x => x.basket_number === num);
   editing = num;
-  els.modalTitle.textContent = `Basket #${num}`;
+  const labelMap = { big: 'Big Ticket', special: 'Special' };
+  const label = labelMap[b.category] || 'Basket';
+  els.modalTitle.textContent = `${label} #${num}`;
   els.ticketInput.value = b.ticket_number || '';
   els.descInput.value = b.description || '';
   els.pickedInput.checked = !!b.picked_up;
+  els.categoryInput.value = b.category || '';
   els.modal.classList.add('open');
   setTimeout(() => els.ticketInput.focus(), 30);
 }
@@ -125,6 +132,7 @@ async function save() {
     ticket_number: els.ticketInput.value.trim(),
     description: els.descInput.value.trim(),
     picked_up: els.pickedInput.checked,
+    category: els.categoryInput.value || null,
   };
   els.saveBtn.disabled = true;
   try {

@@ -48,13 +48,16 @@ function render() {
       return;
     }
   }
+  const labelMap = { big: 'Big Ticket', special: 'Special' };
   els.list.innerHTML = rows.map(b => {
     const status = b.picked_up
       ? `<span class="b-status picked">Picked up</span>`
       : `<span class="b-status waiting">Come claim it</span>`;
+    const catCls = b.category ? ` cat-${b.category}` : '';
+    const label = labelMap[b.category] || 'Basket';
     return `
-      <div class="cust-row ${q && isMatch(b, q) ? 'hit' : ''}">
-        <div class="b-num">Basket<br>#${b.basket_number}</div>
+      <div class="cust-row${catCls} ${q && isMatch(b, q) ? 'hit' : ''}">
+        <div class="b-num">${label}<br>#${b.basket_number}</div>
         <div>
           <div class="b-ticket">${escapeHtml(b.ticket_number)}</div>
           ${b.description ? `<span class="b-desc">${escapeHtml(b.description)}</span>` : ''}

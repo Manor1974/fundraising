@@ -152,6 +152,15 @@ header.app .spacer { flex: 1; }
 .basket-cell .status.waiting { background: rgba(212,175,55,.2); color: var(--gold-400); }
 .basket-cell .desc { color: var(--gray-300); font-size: 11px; }
 .basket-cell.has-ticket { border-color: var(--gold-500); border-width: 1px; }
+.basket-cell.cat-big { border-left: 4px solid #f97316; }
+.basket-cell.cat-special { border-left: 4px solid #8b5cf6; }
+.basket-cell.cat-big .num { color: #f97316; }
+.basket-cell.cat-special .num { color: #a78bfa; }
+
+.cust-row.cat-big { border-left: 4px solid #f97316; padding-left: 8px; }
+.cust-row.cat-special { border-left: 4px solid #8b5cf6; padding-left: 8px; }
+.cust-row.cat-big .b-num { color: #f97316; }
+.cust-row.cat-special .b-num { color: #a78bfa; }
 
 /* Edit modal */
 .modal-bg { position: fixed; inset: 0; background: rgba(5,12,30,.78); display: none; align-items: center; justify-content: center; z-index: 50; padding: 16px; backdrop-filter: blur(2px); }
@@ -374,7 +383,25 @@ body.display-body {
   font-weight: 600;
 }
 
-/* Picked-up state: green border + header + soft green body */
+/* Category colors: Big Ticket (orange), Special (purple). Picked-up always wins green. */
+.dcell.cat-big {
+  border-color: #f97316;
+}
+.dcell.cat-big .basket-header {
+  background: #f97316;
+  color: var(--white);
+  text-shadow: 0 1px 1px rgba(0,0,0,.3);
+}
+.dcell.cat-special {
+  border-color: #8b5cf6;
+}
+.dcell.cat-special .basket-header {
+  background: #8b5cf6;
+  color: var(--white);
+  text-shadow: 0 1px 1px rgba(0,0,0,.3);
+}
+
+/* Picked-up state: green border + header + soft green body. Wins over category. */
 .dcell.picked {
   border-color: var(--good);
   background: linear-gradient(180deg, #eaffe8 0%, var(--white) 60%);

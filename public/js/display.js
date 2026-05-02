@@ -78,15 +78,18 @@ function render() {
   }, 1);
   const fontSize = bigFontSize(layout.cellW, layout.cellH, maxLen, headerH);
 
+  const labelMap = { big: 'BIG TICKET', special: 'SPECIAL' };
   els.grid.innerHTML = baskets.map(b => {
     const has = !!b.ticket_number;
-    const cls = (has ? 'has' : 'empty') + (b.picked_up ? ' picked' : '');
+    const catCls = b.category ? ` cat-${b.category}` : '';
+    const cls = (has ? 'has' : 'empty') + (b.picked_up ? ' picked' : '') + catCls;
     const big = has ? escapeHtml(b.ticket_number) : '—';
     const checkIcon = b.picked_up ? `<span class="pick-icon" aria-label="Picked up">✓</span>` : '';
+    const label = labelMap[b.category] || 'BASKET';
     return `
       <div class="dcell ${cls}" data-num="${b.basket_number}">
         <div class="basket-header" style="font-size:${hFs}px">
-          <span>BASKET #${b.basket_number}</span>${checkIcon}
+          <span>${label} #${b.basket_number}</span>${checkIcon}
         </div>
         <div class="dbig" style="font-size:${fontSize}px">${big}</div>
       </div>

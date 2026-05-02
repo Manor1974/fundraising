@@ -47,6 +47,9 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_baskets_event ON baskets(event_id);
 `);
 
+// Migration: add category column if it doesn't exist (idempotent)
+try { db.exec(`ALTER TABLE baskets ADD COLUMN category TEXT;`); } catch (_) { /* already exists */ }
+
 const stmts = {
   insertEvent: db.prepare(`
     INSERT INTO events (name, organization, event_date, event_time, pin, basket_count, org_logo)
@@ -60,13 +63,13 @@ const stmts = {
   archiveEvent: db.prepare(`UPDATE events SET archived = 1 WHERE id = ?`),
   deleteEvent: db.prepare(`DELETE FROM events WHERE id = ?`),
   listBaskets: db.prepare(`
-    SELECT basket_number, ticket_number, description, picked_up, updated_at
+    SELECT basket_number, ticket_number, description, picked_up, category, updated_at
     FROM baskets WHERE event_id = ? ORDER BY basket_number
   `),
   getBasket: db.prepare(`SELECT * FROM baskets WHERE event_id = ? AND basket_number = ?`),
   updateBasket: db.prepare(`
     UPDATE baskets
-    SET ticket_number = ?, description = ?, picked_up = ?, updated_at = CURRENT_TIMESTAMP
+    SET ticket_number = ?, description = ?, picked_up = ?, category = ?, updated_at = CURRENT_TIMESTAMP
     WHERE event_id = ? AND basket_number = ?
   `),
   countBaskets: db.prepare(`SELECT COUNT(*) AS n FROM baskets WHERE event_id = ?`),
@@ -260,8 +263,12 @@ app.patch('/api/events/:id/baskets/:n', (req, res) => {
   const picked_up = req.body.picked_up !== undefined
     ? (req.body.picked_up ? 1 : 0)
     : existing.picked_up;
+  const allowedCategories = new Set(['big', 'special']);
+  const category = req.body.category !== undefined
+    ? (allowedCategories.has(req.body.category) ? req.body.category : null)
+    : existing.category;
 
-  stmts.updateBasket.run(ticket_number, description, picked_up, event.id, basketNum);
+  stmts.updateBasket.run(ticket_number, description, picked_up, category, event.id, basketNum);
   const updated = stmts.getBasket.get(event.id, basketNum);
   broadcast(event.id, { type: 'basket', basket: updated });
   res.json(updated);

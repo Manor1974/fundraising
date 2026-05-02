@@ -481,6 +481,153 @@ body.display-body {
   .cust-header h1 { font-size: 22px; }
 }
 
+/* ---------- Instructions sheet (organizer one-pager + Save as PDF) ---------- */
+.instructions-body { background: #eef1f6; color: #111; }
+.print-toolbar {
+  background: #fff; border-bottom: 1px solid #d8dde6;
+  position: sticky; top: 0; z-index: 5;
+}
+.print-toolbar .btn.secondary {
+  background: #fff; color: #0f1f44; border: 1px solid #c9d0dd;
+}
+.print-toolbar #printBtn {
+  background: #0f1f44; color: #fff;
+}
+
+.instr-sheet {
+  background: #fff; color: #111;
+  width: 8.2in; max-width: 100%;
+  margin: 24px auto; padding: 0.45in 0.5in;
+  border-radius: 6px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.15);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  line-height: 1.35;
+}
+
+.instr-head {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #d4af37;
+  margin-bottom: 14px;
+}
+.instr-head .ml-mark { width: 56px; height: auto; }
+.instr-head .org-mark { max-height: 50px; max-width: 130px; width: auto; }
+.instr-titles { min-width: 0; }
+.instr-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+  color: #b08d1c; text-transform: uppercase;
+}
+.instr-titles h1 {
+  margin: 2px 0 2px; font-size: 19px; line-height: 1.15;
+  color: #0a1730;
+}
+.instr-meta { font-size: 11.5px; color: #444; }
+
+.instr-callout {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px; align-items: center;
+  background: #fff8e1;
+  border: 1.5px solid #d4af37;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.instr-cta-eyebrow {
+  font-size: 11px; font-weight: 700; color: #6b5a14;
+  text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px;
+}
+.instr-url {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13px; font-weight: 700;
+  color: #0a1730; word-break: break-all;
+}
+.instr-url-sm { font-size: 11.5px; font-weight: 600; }
+.instr-pin { margin-top: 6px; display: flex; align-items: center; gap: 8px; }
+.instr-pin-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  color: #6b5a14; text-transform: uppercase;
+}
+.instr-pin-value {
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 22px; font-weight: 800; letter-spacing: 4px;
+  color: #0a1730;
+  background: #fff; padding: 2px 10px; border-radius: 4px;
+  border: 1px solid #d4af37;
+}
+.instr-callout-right { text-align: center; }
+.instr-callout-right img {
+  width: 130px; height: 130px; display: block;
+  border: 1px solid #d4af37; background: #fff; padding: 4px;
+}
+.qr-caption {
+  font-size: 9.5px; color: #6b5a14; font-weight: 600;
+  margin-top: 4px; text-transform: uppercase; letter-spacing: .5px;
+}
+
+.instr-section { margin-bottom: 11px; page-break-inside: avoid; }
+.instr-section h2 {
+  font-size: 13px; margin: 0 0 5px;
+  color: #0a1730;
+  border-bottom: 1px solid #e3e7ef; padding-bottom: 3px;
+}
+.instr-section-highlight {
+  background: #f0f7ff;
+  border-left: 3px solid #0a1730;
+  padding: 8px 12px; border-radius: 4px;
+}
+.instr-section-highlight h2 { border: 0; padding: 0; margin-bottom: 3px; }
+.instr-section-highlight p { margin: 0; font-size: 11.5px; color: #222; }
+
+.instr-steps {
+  margin: 4px 0 4px 18px; padding: 0;
+  font-size: 11.5px; color: #222;
+}
+.instr-steps li { margin-bottom: 2px; }
+.instr-note {
+  margin: 4px 0 0; font-size: 11px; color: #555; font-style: italic;
+}
+
+.instr-legend {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px 18px;
+  font-size: 11.5px; color: #222;
+}
+.instr-legend li { display: flex; align-items: center; gap: 8px; }
+.instr-legend .chip {
+  display: inline-block; width: 14px; height: 14px;
+  border-radius: 3px; border: 1px solid rgba(0,0,0,.18);
+  flex-shrink: 0;
+}
+.chip-gold { background: #d4af37; }
+.chip-orange { background: #f97316; }
+.chip-purple { background: #8b5cf6; }
+.chip-green { background: #4ad971; }
+.chip-good {
+  display: inline-block; padding: 1px 7px; border-radius: 3px;
+  background: #e6f7ec; color: #1e7a3a; font-weight: 700; font-size: 10.5px;
+}
+
+.instr-foot {
+  margin-top: 12px; padding-top: 8px;
+  border-top: 1px solid #e3e7ef;
+  font-size: 10px; color: #666; text-align: center;
+}
+
+@media print {
+  @page { size: letter; margin: 0.4in; }
+  html, body { background: #fff !important; }
+  .no-print, .print-toolbar { display: none !important; }
+  .instr-sheet {
+    margin: 0; padding: 0; box-shadow: none; border-radius: 0;
+    width: 100%; max-width: 100%;
+  }
+  .instr-section, .instr-callout, .instr-head, .instr-foot { page-break-inside: avoid; }
+}
+
 /* ---------- Print (Save as PDF from customer list) ---------- */
 @media print {
   :root { --bg: #fff; --text: #000; --muted: #555; --panel: #fff; --border: #ccc; --gold-500: #b08d1c; --gold-400: #a07c10; }

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>Winning Numbers · Manor Lanes Fundraisers</title>
+  <link rel="stylesheet" href="/static/css/app.css?v=3">
+</head>
+<body>
+  <header class="cust-header">
+    <div class="logos">
+      <div class="lockup"><img id="orgLogo" alt="" style="display:none"></div>
+      <div class="lockup"><img src="/static/logos/manor-lanes.png" alt="Manor Lanes"></div>
+    </div>
+    <div class="org" id="orgName"></div>
+    <h1 id="evtName">Loading…</h1>
+    <div class="when" id="evtWhen"></div>
+  </header>
+
+  <div class="search-bar">
+    <input id="search" type="search" inputmode="numeric" autocomplete="off" placeholder="Search your ticket number…">
+  </div>
+
+  <main class="cust-list" id="list">
+    <p class="cust-empty">Loading numbers…</p>
+  </main>
+
+  <footer class="cust-footer">
+    <img class="brand-mini" src="/static/logos/manor-lanes.png" alt="Manor Lanes">
+    <div>Hosted by Manor Lanes · Numbers update live</div>
+    <div class="small" style="margin-top:6px"><a href="#" id="downloadPdf">Download PDF</a></div>
+  </footer>
+
+  <script src="/static/js/list.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "manor-lanes-fundraiser",
+  "version": "1.0.0",
+  "description": "Live basket raffle entry, digital display, and customer lookup app for Manor Lanes fundraisers.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.21.0",
+    "multer": "^1.4.5-lts.1",
+    "qrcode": "^1.5.4"
+  }
+}

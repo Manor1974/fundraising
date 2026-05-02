@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>New Event · Manor Lanes Fundraisers</title>
+  <link rel="stylesheet" href="/static/css/app.css?v=3">
+</head>
+<body>
+  <header class="app">
+    <img class="brand" src="/static/logos/manor-lanes.png" alt="Manor Lanes" onerror="this.style.display='none'">
+    <h1>New Event</h1>
+    <div class="spacer"></div>
+    <a class="btn secondary" href="/">Cancel</a>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <form id="form" enctype="multipart/form-data">
+        <div class="field">
+          <label for="name">Event name</label>
+          <input id="name" name="name" required placeholder="e.g. Better Together Spring Basket Raffle">
+        </div>
+
+        <div class="field">
+          <label for="organization">Organization</label>
+          <input id="organization" name="organization" placeholder="e.g. Better Together Pet Resource Center">
+        </div>
+
+        <div class="row" style="gap:12px">
+          <div class="field" style="flex:1">
+            <label for="event_date">Event date</label>
+            <input id="event_date" name="event_date" type="date" required>
+          </div>
+          <div class="field" style="flex:1">
+            <label for="event_time">Time (optional)</label>
+            <input id="event_time" name="event_time" type="text" placeholder="e.g. 6:00 PM">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="basket_count">Number of baskets</label>
+          <input id="basket_count" name="basket_count" type="number" min="1" max="200" value="60" required>
+          <div class="small muted" style="margin-top:6px">You can have any number from 1–200. The display board scales automatically.</div>
+        </div>
+
+        <div class="field">
+          <label for="logo">Organization logo (optional, PNG/JPG/SVG, max 4MB)</label>
+          <input id="logo" name="logo" type="file" accept="image/*">
+        </div>
+
+        <div class="field card" style="background:var(--panel-2); border-style:dashed">
+          <div class="muted small">Admin PIN will be the event date in <strong>MMDD</strong> format. Example: an event on October 15 has PIN <code>1015</code>.</div>
+        </div>
+
+        <div class="row between">
+          <div class="muted small" id="status"></div>
+          <button type="submit">Create Event</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="/static/js/setup.js?v=3"></script>
+</body>
+</html>

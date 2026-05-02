@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>Display · Manor Lanes Fundraisers</title>
+  <link rel="stylesheet" href="/static/css/app.css?v=3">
+</head>
+<body class="display-body">
+  <div class="display-root" id="root">
+    <!-- Header: Org logo · Title block · Manor Lanes logo -->
+    <header class="display-header">
+      <div class="hdr-side hdr-left">
+        <div class="logo-card" id="orgLogoCard" style="display:none">
+          <img id="dOrgLogo" alt="">
+        </div>
+      </div>
+      <div class="hdr-center">
+        <h1 id="dTitle">BASKET RAFFLE</h1>
+        <div class="ribbon">
+          <span id="dSub">Loading…</span>
+        </div>
+      </div>
+      <div class="hdr-side hdr-right">
+        <div class="logo-card">
+          <img id="dManor" src="/static/logos/manor-lanes.png" alt="Manor Lanes" class="manor">
+        </div>
+      </div>
+    </header>
+
+    <!-- Grid -->
+    <section class="display-grid" id="dGrid"></section>
+
+    <!-- Footer: QR · Beneficiary card · Manor Lanes card · Clock/legend -->
+    <footer class="display-footer">
+      <div class="foot-card foot-qr">
+        <img class="qr" id="dQr" alt="QR code">
+        <div class="foot-text">
+          <strong>FIND YOUR NUMBERS</strong>
+          <span>Scan to search the live winning list</span>
+        </div>
+      </div>
+      <div class="foot-card foot-beneficiary">
+        <div class="foot-icon" aria-hidden="true">♥</div>
+        <div class="foot-text">
+          <strong id="dBeneficiaryTitle">ALL PROCEEDS BENEFIT</strong>
+          <span id="dBeneficiarySub">—</span>
+        </div>
+      </div>
+      <div class="foot-card foot-manor">
+        <div class="foot-icon" aria-hidden="true">★</div>
+        <div class="foot-text">
+          <strong>HOSTED AT MANOR LANES</strong>
+          <span>Thank you for your support!</span>
+        </div>
+      </div>
+      <div class="foot-card foot-status">
+        <div class="legend">
+          <span><span class="dot waiting"></span> Waiting</span>
+          <span><span class="dot picked"></span> Picked up</span>
+        </div>
+        <div class="clock" id="dClock"></div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/static/js/display.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Manor Lanes Fundraisers</title>
+  <link rel="stylesheet" href="/static/css/app.css?v=3">
+</head>
+<body>
+  <header class="app">
+    <img class="brand" src="/static/logos/manor-lanes.png" alt="Manor Lanes" onerror="this.style.display='none'">
+    <h1>Fundraiser Console</h1>
+    <div class="spacer"></div>
+    <a class="btn" href="/setup">+ New Event</a>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <div class="row between" style="margin-bottom:14px">
+        <h2 style="margin:0">Events</h2>
+      </div>
+      <div id="list" class="event-list"><p class="muted">Loading…</p></div>
+    </div>
+  </main>
+
+  <script src="/static/js/index.js?v=3"></script>
+</body>
+</html>
